@@ -2,547 +2,799 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#090d1b">
-  <meta name="description" content="Sprizen AI — Your intelligent AI assistant powered by Google Gemini.">
-  <title>Sprizen AI</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#090b16">
+<title>Sprizen AI</title>
 
-  <style>
-    :root {
-      color-scheme: dark;
-      --bg: #090d1b;
-      --panel: rgba(20, 27, 49, .92);
-      --border: rgba(255, 255, 255, .10);
-      --text: #f5f7ff;
-      --muted: #a5b0ce;
-      --purple: #8b5cf6;
-      --cyan: #06b6d4;
-    }
+<style>
+:root {
+  --bg: #090b16;
+  --panel: #101426;
+  --panel2: #171b31;
+  --text: #f4f5ff;
+  --muted: #959db9;
+  --purple: #9b7cff;
+  --blue: #55b8ff;
+  --border: rgba(255,255,255,.09);
+}
 
-    * { box-sizing: border-box; }
+* { box-sizing: border-box; }
 
-    body {
-      margin: 0;
-      min-height: 100dvh;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      color: var(--text);
-      background:
-        radial-gradient(ellipse at 0% 0%, #352068 0, transparent 42%),
-        radial-gradient(ellipse at 100% 100%, #063f58 0, transparent 40%),
-        var(--bg);
-      padding: 16px;
-    }
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background:
+    radial-gradient(ellipse at 15% 0%, #27204e 0, transparent 40%),
+    radial-gradient(ellipse at 100% 50%, #102c4b 0, transparent 35%),
+    var(--bg);
+  color: var(--text);
+  font-family: Inter, system-ui, -apple-system, sans-serif;
+}
 
-    button, textarea { font: inherit; }
+button, textarea { font: inherit; }
+button { color: inherit; cursor: pointer; }
 
-    button { -webkit-tap-highlight-color: transparent; }
+.app {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  max-width: 1000px;
+  margin: auto;
+  padding: 0 20px;
+}
 
-    .app {
-      width: 100%;
-      max-width: 850px;
-      height: calc(100dvh - 32px);
-      min-height: 500px;
-      margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      border: 1px solid var(--border);
-      border-radius: 24px;
-      overflow: hidden;
-      background: rgba(8, 13, 29, .82);
-      box-shadow: 0 20px 70px #0005;
-      backdrop-filter: blur(18px);
-    }
+header {
+  height: 76px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+  gap: 12px;
+}
 
-    header {
-      flex-shrink: 0;
-      padding: 16px 18px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      border-bottom: 1px solid var(--border);
-    }
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
 
-    .logo {
-      width: 46px;
-      height: 46px;
-      flex-shrink: 0;
-      display: grid;
-      place-items: center;
-      border-radius: 16px;
-      background: linear-gradient(135deg, var(--purple), var(--cyan));
-      font-size: 26px;
-      font-weight: 800;
-      box-shadow: 0 0 25px #8b5cf644;
-    }
+.logo {
+  width: 43px;
+  height: 43px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 15px;
+  background: linear-gradient(135deg, #a58aff, #4b9cff);
+  box-shadow: 0 0 28px #8c72ff38;
+  font-size: 23px;
+}
 
-    .brand { min-width: 0; }
+.brand h1 {
+  margin: 0;
+  font-size: 19px;
+  letter-spacing: -.5px;
+}
 
-    header h1 {
-      margin: 0;
-      font-size: 19px;
-      letter-spacing: -.4px;
-    }
+.brand p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 11px;
+}
 
-    header p {
-      margin: 4px 0 0;
-      color: var(--muted);
-      font-size: 12px;
-    }
+.status-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #5de2a0;
+  margin-right: 5px;
+}
 
-    .status {
-      margin-left: auto;
-      white-space: nowrap;
-      color: #86efac;
-      font-size: 11px;
-    }
+.header-actions { display: flex; gap: 8px; }
 
-    .status::before { content: "● "; }
+.icon-btn {
+  width: 42px;
+  height: 42px;
+  border: 1px solid var(--border);
+  background: #ffffff08;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+  transition: .2s;
+}
 
-    main {
-      flex: 1;
-      min-height: 0;
-      padding: 22px 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      overflow-y: auto;
-      overscroll-behavior: contain;
-      scrollbar-width: thin;
-      scrollbar-color: #ffffff22 transparent;
-    }
+.icon-btn:hover { background: #ffffff16; }
+.icon-btn.active {
+  background: #8e70ff28;
+  border-color: var(--purple);
+}
 
-    .welcome {
-      width: 100%;
-      max-width: 590px;
-      margin: auto;
-      text-align: center;
-      padding: 20px 0;
-    }
+main {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 28px 0 16px;
+}
 
-    .orb {
-      width: 78px;
-      height: 78px;
-      display: grid;
-      place-items: center;
-      margin: 0 auto 20px;
-      border: 1px solid #ffffff22;
-      border-radius: 26px;
-      background: linear-gradient(135deg, #8b5cf633, #06b6d422);
-      box-shadow: 0 0 50px #8b5cf622;
-      font-size: 44px;
-    }
+.hero {
+  text-align: center;
+  padding: 14px 10px 28px;
+}
 
-    .welcome h2 {
-      margin: 0 0 10px;
-      font-size: clamp(23px, 5vw, 32px);
-      letter-spacing: -.8px;
-    }
+.orb {
+  width: 84px;
+  height: 84px;
+  margin: 0 auto 20px;
+  display: grid;
+  place-items: center;
+  border-radius: 28px;
+  font-size: 38px;
+  background: linear-gradient(145deg, #a58aff, #407df3);
+  box-shadow: 0 0 60px #8161ff36;
+  animation: float 4s ease-in-out infinite;
+}
 
-    .welcome p {
-      margin: 0;
-      color: var(--muted);
-      line-height: 1.7;
-      font-size: 14px;
-    }
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
 
-    .gradient-text {
-      background: linear-gradient(90deg, #c4b5fd, #67e8f9);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
+.hero h2 {
+  margin: 0;
+  font-size: clamp(27px, 5vw, 39px);
+  letter-spacing: -1.5px;
+}
 
-    .suggestions {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
-      margin-top: 25px;
-    }
+.gradient-text {
+  background: linear-gradient(90deg, #bd9fff, #69c9ff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
 
-    .suggestion {
-      min-height: 65px;
-      padding: 13px;
-      border: 1px solid var(--border);
-      border-radius: 15px;
-      background: #ffffff08;
-      color: var(--text);
-      text-align: left;
-      cursor: pointer;
-      transition: border-color .2s, background .2s;
-    }
+.hero p {
+  color: var(--muted);
+  margin: 12px 0 0;
+  font-size: 14px;
+}
 
-    .suggestion:hover {
-      border-color: #8b5cf6aa;
-      background: #8b5cf612;
-    }
+.chat {
+  width: 100%;
+  max-width: 780px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
 
-    .message {
-      max-width: 88%;
-      padding: 13px 15px;
-      border-radius: 17px;
-      line-height: 1.65;
-      overflow-wrap: anywhere;
-      white-space: pre-wrap;
-      font-size: 14px;
-    }
+.message {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  animation: appear .25s ease;
+  min-width: 0;
+}
 
-    .user {
-      align-self: flex-end;
-      background: linear-gradient(135deg, #7047d9, #4f46e5);
-      border-bottom-right-radius: 5px;
-    }
+@keyframes appear {
+  from { opacity: 0; transform: translateY(7px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 
-    .assistant {
-      align-self: flex-start;
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-bottom-left-radius: 5px;
-    }
+.message.user { flex-direction: row-reverse; }
 
-    .error { color: #fecaca; }
+.avatar {
+  width: 35px;
+  height: 35px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #8e70ff, #4b9cff);
+  font-size: 17px;
+}
 
-    .typing {
-      color: var(--muted);
-      font-style: italic;
-    }
+.user .avatar {
+  background: #252a41;
+  border: 1px solid var(--border);
+}
 
-    .composer {
-      flex-shrink: 0;
-      padding: 13px 14px;
-      padding-bottom: max(13px, env(safe-area-inset-bottom));
-      border-top: 1px solid var(--border);
-      background: #080d1add;
-    }
+.message-content { max-width: 83%; min-width: 0; }
 
-    form {
-      display: flex;
-      align-items: flex-end;
-      gap: 8px;
-      padding: 7px;
-      border: 1px solid var(--border);
-      border-radius: 19px;
-      background: #ffffff08;
-    }
+.message-name {
+  font-size: 11px;
+  color: var(--muted);
+  margin: 2px 0 7px;
+}
 
-    form:focus-within {
-      border-color: #8b5cf677;
-      box-shadow: 0 0 0 3px #8b5cf611;
-    }
+.user .message-name { text-align: right; }
 
-    textarea {
-      flex: 1;
-      min-width: 0;
-      min-height: 42px;
-      max-height: 140px;
-      resize: none;
-      border: 0;
-      outline: 0;
-      color: var(--text);
-      background: transparent;
-      padding: 11px 9px;
-      line-height: 1.5;
-    }
+.bubble {
+  padding: 13px 16px;
+  line-height: 1.7;
+  font-size: 14px;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
 
-    textarea::placeholder { color: #8995b5; }
+.assistant .bubble {
+  background: linear-gradient(135deg, #171b30, #13182a);
+  border: 1px solid var(--border);
+  border-radius: 4px 18px 18px 18px;
+}
 
-    .action {
-      flex-shrink: 0;
-      width: 42px;
-      height: 42px;
-      display: grid;
-      place-items: center;
-      border: 0;
-      border-radius: 13px;
-      background: #ffffff12;
-      color: white;
-      cursor: pointer;
-      font-size: 18px;
-    }
+.user .bubble {
+  background: linear-gradient(135deg, #7558dc, #486fd4);
+  border-radius: 18px 4px 18px 18px;
+}
 
-    .send {
-      background: linear-gradient(135deg, var(--purple), #4f46e5);
-    }
+.message-tools {
+  display: flex;
+  gap: 8px;
+  margin-top: 7px;
+}
 
-    .action:disabled {
-      opacity: .45;
-      cursor: not-allowed;
-    }
+.message-tools button {
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  padding: 4px;
+  font-size: 12px;
+}
 
-    .hint {
-      margin: 9px 0 0;
-      text-align: center;
-      color: var(--muted);
-      font-size: 11px;
-      line-height: 1.5;
-    }
+.message-tools button:hover { color: white; }
 
-    .new-chat {
-      padding: 7px 10px;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      background: #ffffff0a;
-      color: var(--muted);
-      cursor: pointer;
-      font-size: 12px;
-    }
+.typing {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 25px;
+}
 
-    @media (max-width: 480px) {
-      body { padding: 0; }
+.typing span {
+  width: 6px;
+  height: 6px;
+  background: #a58aff;
+  border-radius: 50%;
+  animation: bounce .9s infinite alternate;
+}
 
-      .app {
-        height: 100dvh;
-        min-height: 0;
-        border: 0;
-        border-radius: 0;
-      }
+.typing span:nth-child(2) { animation-delay: .2s; }
+.typing span:nth-child(3) { animation-delay: .4s; }
 
-      header { padding: 13px; }
-      header h1 { font-size: 18px; }
-      main { padding: 17px 12px; }
-      .message { max-width: 94%; }
-      .suggestions { grid-template-columns: 1fr; gap: 8px; }
-      .suggestion { min-height: 52px; }
-      .orb { width: 66px; height: 66px; font-size: 37px; }
-      .composer { padding-left: 10px; padding-right: 10px; }
-      .status { font-size: 10px; }
-    }
+@keyframes bounce {
+  to { transform: translateY(-5px); opacity: .45; }
+}
 
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
-        scroll-behavior: auto !important;
-        transition: none !important;
-      }
-    }
-  </style>
+.suggestions {
+  max-width: 780px;
+  margin: 24px auto 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  justify-content: center;
+}
+
+.suggestion {
+  padding: 10px 13px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: #ffffff06;
+  color: #c7cbe0;
+  font-size: 12px;
+  transition: .2s;
+}
+
+.suggestion:hover {
+  border-color: #987aff;
+  background: #987aff16;
+}
+
+.composer-wrap {
+  width: 100%;
+  max-width: 780px;
+  margin: auto auto 0;
+  padding-top: 28px;
+}
+
+.composer {
+  padding: 12px;
+  background: #121629eF;
+  border: 1px solid #8c7aff45;
+  border-radius: 23px;
+  box-shadow: 0 10px 50px #00000028;
+  backdrop-filter: blur(18px);
+}
+
+textarea {
+  width: 100%;
+  display: block;
+  resize: none;
+  max-height: 150px;
+  min-height: 48px;
+  padding: 10px 8px;
+  background: transparent;
+  border: 0;
+  outline: 0;
+  color: var(--text);
+  line-height: 1.5;
+  font-size: 14px;
+}
+
+textarea::placeholder { color: #777f9d; }
+
+.composer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.composer-hint {
+  padding-left: 7px;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.controls { display: flex; gap: 8px; }
+
+.control-btn {
+  height: 42px;
+  min-width: 42px;
+  padding: 0 12px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: #ffffff08;
+  font-size: 17px;
+}
+
+.control-btn.active {
+  border-color: #ff7070;
+  background: #ff454520;
+}
+
+.send-btn {
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 15px;
+  background: linear-gradient(135deg, #a181ff, #4b9bff);
+  font-size: 20px;
+  box-shadow: 0 5px 20px #8161ff28;
+}
+
+.send-btn:disabled { opacity: .5; cursor: not-allowed; }
+
+footer {
+  text-align: center;
+  padding: 13px 0 18px;
+  color: #777f9a;
+  font-size: 10px;
+}
+
+.toast {
+  position: fixed;
+  bottom: 125px;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 90%;
+  padding: 11px 16px;
+  background: #252b40;
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  color: white;
+  font-size: 12px;
+  z-index: 5;
+  display: none;
+}
+
+@media (max-width: 600px) {
+  .app { padding: 0 13px; }
+  header { height: 67px; }
+  .logo { width: 39px; height: 39px; border-radius: 13px; }
+  .brand h1 { font-size: 17px; }
+  .brand p { font-size: 10px; }
+  .icon-btn { width: 38px; height: 38px; border-radius: 12px; }
+  main { padding-top: 18px; }
+  .hero { padding: 10px 4px 24px; }
+  .orb { width: 70px; height: 70px; font-size: 32px; border-radius: 24px; margin-bottom: 16px; }
+  .hero h2 { letter-spacing: -1px; }
+  .hero p { font-size: 12px; }
+  .message-content { max-width: 87%; }
+  .bubble { font-size: 13px; padding: 12px 13px; }
+  .avatar { width: 32px; height: 32px; }
+  .suggestions { gap: 7px; margin-top: 20px; }
+  .suggestion { font-size: 11px; padding: 9px 11px; }
+  .composer-wrap { padding-top: 20px; }
+  .composer { border-radius: 19px; padding: 9px; }
+  .composer-hint { font-size: 9px; }
+  .control-btn { height: 40px; min-width: 40px; padding: 0 10px; }
+  .send-btn { width: 42px; height: 42px; }
+  footer { padding-bottom: 12px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+  }
+}
+</style>
 </head>
 
 <body>
-  <div class="app">
-    <header>
-      <div class="logo" aria-hidden="true">S</div>
-      <div class="brand">
-        <h1>Sprizen AI</h1>
-        <p>Your AI assistant · Powered by Gemini</p>
-      </div>
-      <button class="new-chat" id="newChat" type="button">＋ New chat</button>
-    </header>
+<div class="app">
 
-    <main id="chat" aria-live="polite">
-      <section class="welcome" id="welcome">
-        <div class="orb" aria-hidden="true">✦</div>
-        <h2>Welcome to <span class="gradient-text">Sprizen AI</span></h2>
-        <p>Your ideas, questions, and curiosity start here.<br>
-          What would you like to explore today?</p>
-
-        <div class="suggestions">
-          <button class="suggestion" data-prompt="Explain artificial intelligence in simple words.">✦ Explain AI simply</button>
-          <button class="suggestion" data-prompt="Give me a beginner coding project in Python.">⌘ Coding project ideas</button>
-          <button class="suggestion" data-prompt="Create a realistic study plan for today.">◷ Plan my study day</button>
-          <button class="suggestion" data-prompt="Teach me something fascinating about space.">✧ Explore space</button>
-        </div>
-      </section>
-    </main>
-
-    <section class="composer">
-      <form id="form">
-        <textarea id="prompt" rows="1" maxlength="8000"
-          placeholder="Message Sprizen AI..."
-          aria-label="Message Sprizen AI"></textarea>
-        <button class="action" type="button" id="voice"
-          title="Voice input" aria-label="Voice input">🎙</button>
-        <button class="action send" id="send"
-          type="submit" aria-label="Send message">➤</button>
-      </form>
-      <p class="hint" id="hint">
-        Enter to send · Shift+Enter for a new line · Microphone permission may be required
-      </p>
-    </section>
+<header>
+  <div class="brand">
+    <div class="logo">✦</div>
+    <div>
+      <h1>Sprizen <span class="gradient-text">AI</span></h1>
+      <p><span class="status-dot"></span>Your AI companion</p>
+    </div>
   </div>
 
-  <script>
-    // IMPORTANT: Replace this with your real Cloudflare Worker URL.
-    // Do not put your Gemini API key in this file.
-    const API_URL = "https://gemini-chatbox-api.gamingmriganga.workers.dev/";
+  <div class="header-actions">
+    <button class="icon-btn" id="voiceToggle" title="Toggle voice replies"
+      aria-label="Toggle voice replies">🔊</button>
+    <button class="icon-btn" id="newChat" title="New chat"
+      aria-label="Start new chat">＋</button>
+  </div>
+</header>
 
-    const chat = document.getElementById("chat");
-    const promptBox = document.getElementById("prompt");
-    const form = document.getElementById("form");
-    const sendBtn = document.getElementById("send");
-    const voiceBtn = document.getElementById("voice");
-    const hint = document.getElementById("hint");
-    const newChatBtn = document.getElementById("newChat");
+<main>
+  <section class="hero" id="hero">
+    <div class="orb">✦</div>
+    <h2>Hey, <span class="gradient-text">what's on your mind?</span></h2>
+    <p>Ask anything. Let's figure it out together.</p>
+  </section>
 
-    let messages = [];
-    let busy = false;
+  <section class="chat" id="chat" aria-live="polite"></section>
 
-    function addMessage(text, role, isError = false) {
-      const el = document.createElement("div");
-      el.className = "message " + role + (isError ? " error" : "");
-      el.textContent = text;
-      chat.appendChild(el);
-      chat.scrollTop = chat.scrollHeight;
-      return el;
-    }
+  <section class="suggestions" id="suggestions">
+    <button class="suggestion" data-prompt="Explain something interesting to me">✨ Teach me something</button>
+    <button class="suggestion" data-prompt="Give me a creative project idea">💡 Creative ideas</button>
+    <button class="suggestion" data-prompt="Tell me a genuinely funny joke">😂 Make me laugh</button>
+    <button class="suggestion" data-prompt="Help me write a simple program">💻 Help me code</button>
+  </section>
 
-    function resetChat() {
-      if (busy) return;
+  <div class="composer-wrap">
+    <form class="composer" id="form">
+      <textarea id="input" rows="1" maxlength="8000"
+        placeholder="Message Sprizen AI..." aria-label="Message Sprizen AI"></textarea>
 
-      messages = [];
-      chat.replaceChildren();
+      <div class="composer-bottom">
+        <span class="composer-hint" id="hint">Enter to send · Shift + Enter for a new line</span>
 
-      const welcome = document.createElement("section");
-      welcome.className = "welcome";
-      welcome.id = "welcome";
-      welcome.innerHTML = `
-        <div class="orb" aria-hidden="true">✦</div>
-        <h2>Welcome to <span class="gradient-text">Sprizen AI</span></h2>
-        <p>Your ideas, questions, and curiosity start here.<br>
-        What would you like to explore today?</p>
-        <div class="suggestions">
-          <button class="suggestion" data-prompt="Explain artificial intelligence in simple words.">✦ Explain AI simply</button>
-          <button class="suggestion" data-prompt="Give me a beginner coding project in Python.">⌘ Coding project ideas</button>
-          <button class="suggestion" data-prompt="Create a realistic study plan for today.">◷ Plan my study day</button>
-          <button class="suggestion" data-prompt="Teach me something fascinating about space.">✧ Explore space</button>
-        </div>`;
+        <div class="controls">
+          <button type="button" class="control-btn" id="mic"
+            title="Speak your message" aria-label="Start voice input">🎙️</button>
+          <button type="submit" class="send-btn" id="send"
+            aria-label="Send message">➤</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</main>
 
-      chat.appendChild(welcome);
-      attachSuggestionHandlers();
-      hint.textContent = "New conversation ready.";
-      promptBox.focus();
-    }
+<footer>Sprizen AI · Made with curiosity ✨</footer>
+</div>
 
-    async function sendMessage(text) {
-      text = text.trim();
+<div class="toast" id="toast" role="status"></div>
 
-      if (!text || busy) return;
+<script>
+/*
+  IMPORTANT:
+  Keep your existing deployed Cloudflare Worker URL here.
+  Do not put your Gemini API key in this file.
+*/
+const API_URL = "https://YOUR-WORKER-URL";
 
-      if (API_URL.includes("YOUR-WORKER-URL")) {
-        addMessage(
-          "Setup needed: replace YOUR-WORKER-URL in index.html with your deployed Cloudflare Worker URL.",
-          "assistant",
-          true
-        );
-        return;
-      }
+const chat = document.getElementById("chat");
+const form = document.getElementById("form");
+const input = document.getElementById("input");
+const send = document.getElementById("send");
+const mic = document.getElementById("mic");
+const hint = document.getElementById("hint");
+const hero = document.getElementById("hero");
+const suggestions = document.getElementById("suggestions");
+const voiceToggle = document.getElementById("voiceToggle");
+const toast = document.getElementById("toast");
 
-      document.getElementById("welcome")?.remove();
-      promptBox.value = "";
-      promptBox.style.height = "auto";
+const greeting = "Yo kene khobor mok Mriganga oi banoic ✌🏻😭";
 
-      busy = true;
-      sendBtn.disabled = true;
-      voiceBtn.disabled = true;
-      newChatBtn.disabled = true;
-      hint.textContent = "Sprizen AI is thinking…";
+let messages = [];
+let busy = false;
+let voiceReplies = false;
+let recognition = null;
+let listening = false;
+let toastTimer;
 
-      messages.push({ role: "user", content: text });
-      addMessage(text, "user");
+function showToast(message) {
+  toast.textContent = message;
+  toast.style.display = "block";
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.style.display = "none", 3000);
+}
 
-      const loading = addMessage("Thinking…", "assistant");
-      loading.classList.add("typing");
+function setWelcomeVisibility() {
+  const hasUserMessage = messages.some(m => m.role === "user");
+  hero.style.display = hasUserMessage ? "none" : "block";
+  suggestions.style.display = hasUserMessage ? "none" : "flex";
+}
 
+function scrollToBottom() {
+  window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+}
+
+function addMessage(role, text, options = {}) {
+  const row = document.createElement("div");
+  row.className = "message " + role;
+
+  const avatar = document.createElement("div");
+  avatar.className = "avatar";
+  avatar.textContent = role === "assistant" ? "✦" : "👤";
+
+  const content = document.createElement("div");
+  content.className = "message-content";
+
+  const name = document.createElement("div");
+  name.className = "message-name";
+  name.textContent = role === "assistant" ? "Sprizen AI" : "You";
+
+  const bubble = document.createElement("div");
+  bubble.className = "bubble";
+  bubble.textContent = text;
+
+  content.append(name, bubble);
+
+  if (role === "assistant" && !options.typing) {
+    const tools = document.createElement("div");
+    tools.className = "message-tools";
+
+    const copy = document.createElement("button");
+    copy.textContent = "Copy";
+    copy.onclick = async () => {
       try {
-        const response = await fetch(API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ messages })
-        });
-
-        const data = await response.json();
-
-        if (!response.ok || !data.reply) {
-          throw new Error(data.error || "Request failed. Please try again.");
-        }
-
-        loading.classList.remove("typing");
-        loading.textContent = data.reply;
-        messages.push({ role: "assistant", content: data.reply });
-        hint.textContent = "Powered by Google Gemini.";
-      } catch (error) {
-        loading.classList.remove("typing");
-        loading.classList.add("error");
-        loading.textContent = "Error: " + error.message;
-        messages.pop();
-        hint.textContent = "Connection failed. Check your internet or Worker settings.";
-      } finally {
-        busy = false;
-        sendBtn.disabled = false;
-        voiceBtn.disabled = false;
-        newChatBtn.disabled = false;
-        promptBox.focus();
-        chat.scrollTop = chat.scrollHeight;
+        await navigator.clipboard.writeText(text);
+        showToast("Copied to clipboard!");
+      } catch {
+        showToast("Couldn't copy. Please select the text.");
       }
-    }
+    };
 
-    form.addEventListener("submit", (event) => {
-      event.preventDefault();
-      sendMessage(promptBox.value);
+    const speak = document.createElement("button");
+    speak.textContent = "🔊 Speak";
+    speak.onclick = () => speakText(text);
+
+    tools.append(copy, speak);
+    content.appendChild(tools);
+  }
+
+  row.append(avatar, content);
+  chat.appendChild(row);
+  scrollToBottom();
+  return row;
+}
+
+function showTyping() {
+  const row = addMessage("assistant", "", { typing: true });
+  row.querySelector(".message-name").textContent = "Sprizen AI is thinking";
+
+  const bubble = row.querySelector(".bubble");
+  bubble.classList.add("typing");
+  bubble.innerHTML = "<span></span><span></span><span></span>";
+  return row;
+}
+
+function speakText(text) {
+  if (!("speechSynthesis" in window)) {
+    showToast("Voice replies aren't supported in this browser.");
+    return;
+  }
+
+  window.speechSynthesis.cancel();
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = "en-IN";
+  utterance.rate = 1;
+  utterance.pitch = 1;
+  window.speechSynthesis.speak(utterance);
+}
+
+function stopSpeaking() {
+  if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+}
+
+function setVoiceReplies(enabled) {
+  voiceReplies = enabled;
+  voiceToggle.classList.toggle("active", enabled);
+  voiceToggle.textContent = enabled ? "🔊" : "🔈";
+  voiceToggle.title = enabled ? "Voice replies are on" : "Voice replies are off";
+  showToast(enabled ? "Voice replies enabled" : "Voice replies disabled");
+}
+
+voiceToggle.addEventListener("click", () => {
+  setVoiceReplies(!voiceReplies);
+});
+
+function stopListening() {
+  if (recognition && listening) {
+    try { recognition.stop(); } catch {}
+  }
+  listening = false;
+  mic.classList.remove("active");
+  mic.textContent = "🎙️";
+}
+
+function startListening() {
+  const SpeechRecognition =
+    window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  if (!SpeechRecognition) {
+    showToast("Voice input isn't supported here. Try Chrome on Android.");
+    return;
+  }
+
+  if (listening) {
+    stopListening();
+    return;
+  }
+
+  recognition = new SpeechRecognition();
+  recognition.lang = "en-IN";
+  recognition.continuous = false;
+  recognition.interimResults = true;
+
+  recognition.onstart = () => {
+    listening = true;
+    mic.classList.add("active");
+    mic.textContent = "⏹️";
+    hint.textContent = "Listening... tap the microphone to stop";
+  };
+
+  recognition.onresult = event => {
+    let transcript = "";
+    for (let i = event.resultIndex; i < event.results.length; i++) {
+      transcript += event.results[i][0].transcript;
+    }
+    input.value = transcript;
+    autoResize();
+  };
+
+  recognition.onerror = event => {
+    if (event.error === "not-allowed") {
+      showToast("Allow microphone access in your browser settings.");
+    } else if (event.error !== "no-speech" && event.error !== "aborted") {
+      showToast("Voice input error: " + event.error);
+    }
+  };
+
+  recognition.onend = () => {
+    listening = false;
+    mic.classList.remove("active");
+    mic.textContent = "🎙️";
+    hint.textContent = "Enter to send · Shift + Enter for a new line";
+  };
+
+  try {
+    recognition.start();
+  } catch {
+    showToast("Couldn't start the microphone. Please try again.");
+  }
+}
+
+mic.addEventListener("click", startListening);
+
+function autoResize() {
+  input.style.height = "auto";
+  input.style.height = Math.min(input.scrollHeight, 150) + "px";
+}
+
+input.addEventListener("input", autoResize);
+
+input.addEventListener("keydown", event => {
+  if (event.key === "Enter" && !event.shiftKey && !event.isComposing) {
+    event.preventDefault();
+    form.requestSubmit();
+  }
+});
+
+async function sendMessage(text) {
+  text = text.trim();
+
+  if (!text || busy) return;
+
+  if (!API_URL || API_URL.includes("https://gemini-chatbox-api.gamingmriganga.workers.dev/")) {
+    showToast("Add your deployed Cloudflare Worker URL in index.html.");
+    return;
+  }
+
+  stopListening();
+  stopSpeaking();
+
+  messages.push({ role: "user", content: text });
+  addMessage("user", text);
+  setWelcomeVisibility();
+
+  input.value = "";
+  autoResize();
+  busy = true;
+  send.disabled = true;
+
+  const typingRow = showTyping();
+
+  try {
+    const response = await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ messages })
     });
 
-    promptBox.addEventListener("keydown", (event) => {
-      if (event.key === "Enter" && !event.shiftKey) {
-        event.preventDefault();
-        form.requestSubmit();
-      }
-    });
-
-    promptBox.addEventListener("input", () => {
-      promptBox.style.height = "auto";
-      promptBox.style.height = Math.min(promptBox.scrollHeight, 140) + "px";
-    });
-
-    function attachSuggestionHandlers() {
-      document.querySelectorAll("[data-prompt]").forEach((button) => {
-        button.onclick = () => sendMessage(button.dataset.prompt);
-      });
+    let data;
+    try {
+      data = await response.json();
+    } catch {
+      throw new Error("The server returned an invalid response.");
     }
 
-    attachSuggestionHandlers();
-    newChatBtn.addEventListener("click", resetChat);
-
-    const SpeechRecognition =
-      window.SpeechRecognition || window.webkitSpeechRecognition;
-
-    if (SpeechRecognition) {
-      const recognition = new SpeechRecognition();
-      recognition.lang = "en-IN";
-      recognition.interimResults = false;
-      recognition.maxAlternatives = 1;
-
-      voiceBtn.addEventListener("click", () => {
-        try {
-          recognition.start();
-          hint.textContent = "Listening… Speak now.";
-        } catch (error) {
-          hint.textContent = "Microphone is starting or unavailable. Try again.";
-        }
-      });
-
-      recognition.onresult = (event) => {
-        promptBox.value = event.results[0][0].transcript;
-        promptBox.dispatchEvent(new Event("input"));
-        hint.textContent = "Voice captured. Tap send to submit.";
-        promptBox.focus();
-      };
-
-      recognition.onerror = (event) => {
-        hint.textContent = event.error === "not-allowed"
-          ? "Microphone permission denied. Enable it in your browser settings."
-          : "Voice input failed. Check microphone permission and try again.";
-      };
-
-      recognition.onend = () => {
-        if (hint.textContent === "Listening… Speak now.") {
-          hint.textContent = "Enter to send · Shift+Enter for a new line";
-        }
-      };
-    } else {
-      voiceBtn.disabled = true;
-      voiceBtn.title = "Voice input isn't supported by this browser";
-      hint.textContent = "Voice input isn't supported here. Try Chrome on Android.";
+    if (!response.ok || !data.reply) {
+      throw new Error(data.error || "The AI couldn't respond. Please try again.");
     }
-  </script>
+
+    typingRow.remove();
+    messages.push({ role: "assistant", content: data.reply });
+    addMessage("assistant", data.reply);
+
+    if (voiceReplies) speakText(data.reply);
+  } catch (error) {
+    typingRow.remove();
+
+    const errorText = error.message.includes("Failed to fetch")
+      ? "Couldn't connect to Sprizen AI. Check your internet connection and Worker URL."
+      : error.message;
+
+    addMessage("assistant", "⚠️ " + errorText);
+  } finally {
+    busy = false;
+    send.disabled = false;
+    input.focus();
+  }
+}
+
+form.addEventListener("submit", event => {
+  event.preventDefault();
+  sendMessage(input.value);
+});
+
+suggestions.addEventListener("click", event => {
+  const button = event.target.closest("[data-prompt]");
+  if (button) sendMessage(button.dataset.prompt);
+});
+
+document.getElementById("newChat").addEventListener("click", () => {
+  stopListening();
+  stopSpeaking();
+  messages = [];
+  chat.innerHTML = "";
+  messages.push({ role: "assistant", content: greeting });
+  addMessage("assistant", greeting);
+  setWelcomeVisibility();
+  input.value = "";
+  autoResize();
+  showToast("New chat started ✨");
+});
+
+function initialize() {
+  messages = [{ role: "assistant", content: greeting }];
+  addMessage("assistant", greeting);
+  setWelcomeVisibility();
+}
+
+initialize();
+</script>
 </body>
-          </html>
-          
+</html>

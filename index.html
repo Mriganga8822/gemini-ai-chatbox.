@@ -492,7 +492,7 @@ footer {
   Keep your existing deployed Cloudflare Worker URL here.
   Do not put your Gemini API key in this file.
 */
-const API_URL = "https://YOUR-WORKER-URL";
+const API_URL = "https://gemini-chatbox-api.gamingmriganga.workers.dev";
 
 const chat = document.getElementById("chat");
 const form = document.getElementById("form");
@@ -708,7 +708,7 @@ async function sendMessage(text) {
 
   if (!text || busy) return;
 
-  if (!API_URL || API_URL.includes("https://gemini-chatbox-api.gamingmriganga.workers.dev/")) {
+  if (!API_URL || API_URL.includes("YOUR-WORKER-URL")) {
     showToast("Add your deployed Cloudflare Worker URL in index.html.");
     return;
   }

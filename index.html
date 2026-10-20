@@ -1,0 +1,548 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#090d1b">
+  <meta name="description" content="Sprizen AI — Your intelligent AI assistant powered by Google Gemini.">
+  <title>Sprizen AI</title>
+
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #090d1b;
+      --panel: rgba(20, 27, 49, .92);
+      --border: rgba(255, 255, 255, .10);
+      --text: #f5f7ff;
+      --muted: #a5b0ce;
+      --purple: #8b5cf6;
+      --cyan: #06b6d4;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100dvh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(ellipse at 0% 0%, #352068 0, transparent 42%),
+        radial-gradient(ellipse at 100% 100%, #063f58 0, transparent 40%),
+        var(--bg);
+      padding: 16px;
+    }
+
+    button, textarea { font: inherit; }
+
+    button { -webkit-tap-highlight-color: transparent; }
+
+    .app {
+      width: 100%;
+      max-width: 850px;
+      height: calc(100dvh - 32px);
+      min-height: 500px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      overflow: hidden;
+      background: rgba(8, 13, 29, .82);
+      box-shadow: 0 20px 70px #0005;
+      backdrop-filter: blur(18px);
+    }
+
+    header {
+      flex-shrink: 0;
+      padding: 16px 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo {
+      width: 46px;
+      height: 46px;
+      flex-shrink: 0;
+      display: grid;
+      place-items: center;
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--purple), var(--cyan));
+      font-size: 26px;
+      font-weight: 800;
+      box-shadow: 0 0 25px #8b5cf644;
+    }
+
+    .brand { min-width: 0; }
+
+    header h1 {
+      margin: 0;
+      font-size: 19px;
+      letter-spacing: -.4px;
+    }
+
+    header p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .status {
+      margin-left: auto;
+      white-space: nowrap;
+      color: #86efac;
+      font-size: 11px;
+    }
+
+    .status::before { content: "● "; }
+
+    main {
+      flex: 1;
+      min-height: 0;
+      padding: 22px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      scrollbar-width: thin;
+      scrollbar-color: #ffffff22 transparent;
+    }
+
+    .welcome {
+      width: 100%;
+      max-width: 590px;
+      margin: auto;
+      text-align: center;
+      padding: 20px 0;
+    }
+
+    .orb {
+      width: 78px;
+      height: 78px;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 20px;
+      border: 1px solid #ffffff22;
+      border-radius: 26px;
+      background: linear-gradient(135deg, #8b5cf633, #06b6d422);
+      box-shadow: 0 0 50px #8b5cf622;
+      font-size: 44px;
+    }
+
+    .welcome h2 {
+      margin: 0 0 10px;
+      font-size: clamp(23px, 5vw, 32px);
+      letter-spacing: -.8px;
+    }
+
+    .welcome p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    .gradient-text {
+      background: linear-gradient(90deg, #c4b5fd, #67e8f9);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .suggestions {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 25px;
+    }
+
+    .suggestion {
+      min-height: 65px;
+      padding: 13px;
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      background: #ffffff08;
+      color: var(--text);
+      text-align: left;
+      cursor: pointer;
+      transition: border-color .2s, background .2s;
+    }
+
+    .suggestion:hover {
+      border-color: #8b5cf6aa;
+      background: #8b5cf612;
+    }
+
+    .message {
+      max-width: 88%;
+      padding: 13px 15px;
+      border-radius: 17px;
+      line-height: 1.65;
+      overflow-wrap: anywhere;
+      white-space: pre-wrap;
+      font-size: 14px;
+    }
+
+    .user {
+      align-self: flex-end;
+      background: linear-gradient(135deg, #7047d9, #4f46e5);
+      border-bottom-right-radius: 5px;
+    }
+
+    .assistant {
+      align-self: flex-start;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-bottom-left-radius: 5px;
+    }
+
+    .error { color: #fecaca; }
+
+    .typing {
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    .composer {
+      flex-shrink: 0;
+      padding: 13px 14px;
+      padding-bottom: max(13px, env(safe-area-inset-bottom));
+      border-top: 1px solid var(--border);
+      background: #080d1add;
+    }
+
+    form {
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+      padding: 7px;
+      border: 1px solid var(--border);
+      border-radius: 19px;
+      background: #ffffff08;
+    }
+
+    form:focus-within {
+      border-color: #8b5cf677;
+      box-shadow: 0 0 0 3px #8b5cf611;
+    }
+
+    textarea {
+      flex: 1;
+      min-width: 0;
+      min-height: 42px;
+      max-height: 140px;
+      resize: none;
+      border: 0;
+      outline: 0;
+      color: var(--text);
+      background: transparent;
+      padding: 11px 9px;
+      line-height: 1.5;
+    }
+
+    textarea::placeholder { color: #8995b5; }
+
+    .action {
+      flex-shrink: 0;
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border: 0;
+      border-radius: 13px;
+      background: #ffffff12;
+      color: white;
+      cursor: pointer;
+      font-size: 18px;
+    }
+
+    .send {
+      background: linear-gradient(135deg, var(--purple), #4f46e5);
+    }
+
+    .action:disabled {
+      opacity: .45;
+      cursor: not-allowed;
+    }
+
+    .hint {
+      margin: 9px 0 0;
+      text-align: center;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.5;
+    }
+
+    .new-chat {
+      padding: 7px 10px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #ffffff0a;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    @media (max-width: 480px) {
+      body { padding: 0; }
+
+      .app {
+        height: 100dvh;
+        min-height: 0;
+        border: 0;
+        border-radius: 0;
+      }
+
+      header { padding: 13px; }
+      header h1 { font-size: 18px; }
+      main { padding: 17px 12px; }
+      .message { max-width: 94%; }
+      .suggestions { grid-template-columns: 1fr; gap: 8px; }
+      .suggestion { min-height: 52px; }
+      .orb { width: 66px; height: 66px; font-size: 37px; }
+      .composer { padding-left: 10px; padding-right: 10px; }
+      .status { font-size: 10px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <header>
+      <div class="logo" aria-hidden="true">S</div>
+      <div class="brand">
+        <h1>Sprizen AI</h1>
+        <p>Your AI assistant · Powered by Gemini</p>
+      </div>
+      <button class="new-chat" id="newChat" type="button">＋ New chat</button>
+    </header>
+
+    <main id="chat" aria-live="polite">
+      <section class="welcome" id="welcome">
+        <div class="orb" aria-hidden="true">✦</div>
+        <h2>Welcome to <span class="gradient-text">Sprizen AI</span></h2>
+        <p>Your ideas, questions, and curiosity start here.<br>
+          What would you like to explore today?</p>
+
+        <div class="suggestions">
+          <button class="suggestion" data-prompt="Explain artificial intelligence in simple words.">✦ Explain AI simply</button>
+          <button class="suggestion" data-prompt="Give me a beginner coding project in Python.">⌘ Coding project ideas</button>
+          <button class="suggestion" data-prompt="Create a realistic study plan for today.">◷ Plan my study day</button>
+          <button class="suggestion" data-prompt="Teach me something fascinating about space.">✧ Explore space</button>
+        </div>
+      </section>
+    </main>
+
+    <section class="composer">
+      <form id="form">
+        <textarea id="prompt" rows="1" maxlength="8000"
+          placeholder="Message Sprizen AI..."
+          aria-label="Message Sprizen AI"></textarea>
+        <button class="action" type="button" id="voice"
+          title="Voice input" aria-label="Voice input">🎙</button>
+        <button class="action send" id="send"
+          type="submit" aria-label="Send message">➤</button>
+      </form>
+      <p class="hint" id="hint">
+        Enter to send · Shift+Enter for a new line · Microphone permission may be required
+      </p>
+    </section>
+  </div>
+
+  <script>
+    // IMPORTANT: Replace this with your real Cloudflare Worker URL.
+    // Do not put your Gemini API key in this file.
+    const API_URL = "https://gemini-chatbox-api.gamingmriganga.workers.dev/";
+
+    const chat = document.getElementById("chat");
+    const promptBox = document.getElementById("prompt");
+    const form = document.getElementById("form");
+    const sendBtn = document.getElementById("send");
+    const voiceBtn = document.getElementById("voice");
+    const hint = document.getElementById("hint");
+    const newChatBtn = document.getElementById("newChat");
+
+    let messages = [];
+    let busy = false;
+
+    function addMessage(text, role, isError = false) {
+      const el = document.createElement("div");
+      el.className = "message " + role + (isError ? " error" : "");
+      el.textContent = text;
+      chat.appendChild(el);
+      chat.scrollTop = chat.scrollHeight;
+      return el;
+    }
+
+    function resetChat() {
+      if (busy) return;
+
+      messages = [];
+      chat.replaceChildren();
+
+      const welcome = document.createElement("section");
+      welcome.className = "welcome";
+      welcome.id = "welcome";
+      welcome.innerHTML = `
+        <div class="orb" aria-hidden="true">✦</div>
+        <h2>Welcome to <span class="gradient-text">Sprizen AI</span></h2>
+        <p>Your ideas, questions, and curiosity start here.<br>
+        What would you like to explore today?</p>
+        <div class="suggestions">
+          <button class="suggestion" data-prompt="Explain artificial intelligence in simple words.">✦ Explain AI simply</button>
+          <button class="suggestion" data-prompt="Give me a beginner coding project in Python.">⌘ Coding project ideas</button>
+          <button class="suggestion" data-prompt="Create a realistic study plan for today.">◷ Plan my study day</button>
+          <button class="suggestion" data-prompt="Teach me something fascinating about space.">✧ Explore space</button>
+        </div>`;
+
+      chat.appendChild(welcome);
+      attachSuggestionHandlers();
+      hint.textContent = "New conversation ready.";
+      promptBox.focus();
+    }
+
+    async function sendMessage(text) {
+      text = text.trim();
+
+      if (!text || busy) return;
+
+      if (API_URL.includes("YOUR-WORKER-URL")) {
+        addMessage(
+          "Setup needed: replace YOUR-WORKER-URL in index.html with your deployed Cloudflare Worker URL.",
+          "assistant",
+          true
+        );
+        return;
+      }
+
+      document.getElementById("welcome")?.remove();
+      promptBox.value = "";
+      promptBox.style.height = "auto";
+
+      busy = true;
+      sendBtn.disabled = true;
+      voiceBtn.disabled = true;
+      newChatBtn.disabled = true;
+      hint.textContent = "Sprizen AI is thinking…";
+
+      messages.push({ role: "user", content: text });
+      addMessage(text, "user");
+
+      const loading = addMessage("Thinking…", "assistant");
+      loading.classList.add("typing");
+
+      try {
+        const response = await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ messages })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.reply) {
+          throw new Error(data.error || "Request failed. Please try again.");
+        }
+
+        loading.classList.remove("typing");
+        loading.textContent = data.reply;
+        messages.push({ role: "assistant", content: data.reply });
+        hint.textContent = "Powered by Google Gemini.";
+      } catch (error) {
+        loading.classList.remove("typing");
+        loading.classList.add("error");
+        loading.textContent = "Error: " + error.message;
+        messages.pop();
+        hint.textContent = "Connection failed. Check your internet or Worker settings.";
+      } finally {
+        busy = false;
+        sendBtn.disabled = false;
+        voiceBtn.disabled = false;
+        newChatBtn.disabled = false;
+        promptBox.focus();
+        chat.scrollTop = chat.scrollHeight;
+      }
+    }
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      sendMessage(promptBox.value);
+    });
+
+    promptBox.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        form.requestSubmit();
+      }
+    });
+
+    promptBox.addEventListener("input", () => {
+      promptBox.style.height = "auto";
+      promptBox.style.height = Math.min(promptBox.scrollHeight, 140) + "px";
+    });
+
+    function attachSuggestionHandlers() {
+      document.querySelectorAll("[data-prompt]").forEach((button) => {
+        button.onclick = () => sendMessage(button.dataset.prompt);
+      });
+    }
+
+    attachSuggestionHandlers();
+    newChatBtn.addEventListener("click", resetChat);
+
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (SpeechRecognition) {
+      const recognition = new SpeechRecognition();
+      recognition.lang = "en-IN";
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+
+      voiceBtn.addEventListener("click", () => {
+        try {
+          recognition.start();
+          hint.textContent = "Listening… Speak now.";
+        } catch (error) {
+          hint.textContent = "Microphone is starting or unavailable. Try again.";
+        }
+      });
+
+      recognition.onresult = (event) => {
+        promptBox.value = event.results[0][0].transcript;
+        promptBox.dispatchEvent(new Event("input"));
+        hint.textContent = "Voice captured. Tap send to submit.";
+        promptBox.focus();
+      };
+
+      recognition.onerror = (event) => {
+        hint.textContent = event.error === "not-allowed"
+          ? "Microphone permission denied. Enable it in your browser settings."
+          : "Voice input failed. Check microphone permission and try again.";
+      };
+
+      recognition.onend = () => {
+        if (hint.textContent === "Listening… Speak now.") {
+          hint.textContent = "Enter to send · Shift+Enter for a new line";
+        }
+      };
+    } else {
+      voiceBtn.disabled = true;
+      voiceBtn.title = "Voice input isn't supported by this browser";
+      hint.textContent = "Voice input isn't supported here. Try Chrome on Android.";
+    }
+  </script>
+</body>
+          </html>
+          
